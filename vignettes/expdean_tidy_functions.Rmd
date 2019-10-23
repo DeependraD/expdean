@@ -1,0 +1,57 @@
+---
+title: "expdean tidy functions for batch modeling"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{expdean tidy functions for batch modeling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(expdean)
+```
+
+## `lm_list()` function
+
+```{r}
+mt_trial <- mtcars %>%
+  rownames_to_column("vehicle_name") %>%
+  as_tibble() %>%
+  mutate_at(c("vehicle_name", "vs", "am"), as.factor)
+
+lm_model_list1 <- lm_list(mt_trial, c("mpg", "drat", "qsec"), c("am", "vs", "am:vs", "hp"))
+
+```
+
+## `model_mean_differences()` function
+
+Linear mixed model can be fitted using `lme` package. Marginal and conditional means of continuous response variables can be extracted from this model class or `lmer` objects using estimated marginal means available in `emmeans` package.
+
+```{r}
+# pairwise comparison between treatment levels
+pairs(emmeans::emmeans(lm_model_list1, "am"))
+# p-value comparison
+emmeans::pwpp(emmeans::emmeans(lm_model_list1, "am"))
+```
+
+Model contrasts and contrast coefficients can be assessed.
+
+```{r}
+# contrasts
+emmeans::contrast(emmeans::emmeans(lm_model_list1, "am"))
+coef(emmeans_contrast) # contrast coefficients can be assessed
+```
+
+Pairwise comparison of estimated marginal means:
+
+```{r}
+multcomp::cld(emmeans::emmeans(lm_model_list1, "am")) # compact display
+```
+

@@ -1,0 +1,35 @@
+Package: expdean
+Type: Package
+Title: Collection of Design and Analysis Functions for Agriculture and Related Fields Data
+Version: 0.1.0
+Author: person("Deependra", "Dhakal", email = "ddhakal.rookie@gmail.com", role = c("cre", "aut"), comment = "<https://orcid.org/0000-0002-0347-7950>")
+Maintainer: person("Deependra", "Dhakal", email = "ddhakal.rookie@gmail.com", role = c("cre", "aut"), comment = "<https://orcid.org/0000-0002-0347-7950>")
+Repository: github
+Description: Scripts turned functions for analysing and tidying data in Agriculture and related field of sciences.
+    Additionally, dataset oriented example are provided for quick use.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+# Date/Publication: 2019-10-01 22:18:02 UTC
+# URL: http://dplyr.tidyverse.org,
+#       https: //github.com/tidyverse/dplyr
+Depends: R (>= 3.2.0)
+VignetteBuilder: knitr
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown,
+    tidyverse
+Imports: 
+    janitor,
+    stringr,
+    stringi,
+    magrittr,
+    purrr,
+    stats,
+    dplyr,
+    tidyr,
+    Hmisc,
+    xtable,
+    gridExtra,
+    grid
