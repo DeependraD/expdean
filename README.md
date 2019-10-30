@@ -8,7 +8,7 @@ The *ex*periment *de*sign and *an*alysis package is meant for dealing with data 
 
 ## Installation
 
-You can install the released version of expdean from [Github](https://github.com/DeependraD/expdean) with:
+You can install development version of the expdean package from [Github](https://github.com/DeependraD/expdean) with:
 
 ``` r
 devtools::install_github("DeependraD/expdean")
@@ -30,7 +30,7 @@ lm_list()
 4. `mean_differences_lm`, `mean_differences_emmeans`: Mean separation techniques for multiple. Some visualization techniques are also included as comment.
 5. `p_annotator`: Model summary table for various model types]. This implements tidy techniques for regression model summary table generation (Looks alike stargazer summary table.
 6. `long_stargazer`: Model summary table with modified stargazer and some useful defaults.
-7. [Example script for multiple column pasting in designed way](scripts/paste_together_multicolumns_by_index.R)
+7. [Example script for multiple column pasting in designed way](./scripts/paste_together_multicolumns_by_index.R)
 
 
 # Trait genetics with R
