@@ -29,10 +29,10 @@ library(expdean)
 ## Checklist
 
 1. Resolve covariate specification in `trait_genetics_tidy.R`.
-- [] `heritability_n_blues()` function should accept `NULL` as well as arbitrary number of covariates.
-- [] confirm the validity of `heritability_n_blues()` function in estimating heritability.
+- [ ] `heritability_n_blues()` function should accept `NULL` as well as arbitrary number of covariates.
+- [ ] confirm the validity of `heritability_n_blues()` function in estimating heritability.
 2. Currently only 3 models are tidied (in join step) due to column name mismatch in `model_summary_kabletype.R`'s `p_annotator()` function.
-- [] Use metaprogramming to solve it.
+- [ ] Use metaprogramming to solve it.
 
 ## Building my first package
 
