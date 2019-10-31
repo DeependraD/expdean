@@ -12,9 +12,6 @@
 #' @importFrom stargazer stargazer
 #'
 #' @examples
-#' @note Must use this function with float=FALSE in stargazer
-#' @note While using stargazer in a chunk use results = "asis" in option.
-#'
 #' \dontrun{
 #' # some nice defaults for longstargazer
 # long_stargazer(some_model_or_list_of_models,
@@ -36,6 +33,9 @@
 #                float = TRUE,
 #                no.space = TRUE) # "no.space" to remove empty lines
 #' }
+#'
+#' @note Must use this function with float=FALSE in stargazer
+#' @note While using stargazer in a chunk use results = "asis" in option.
 #'
 long_stargazer <- function(...){
   output <- capture.output(stargazer::stargazer(...))

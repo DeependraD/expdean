@@ -18,7 +18,7 @@
 #'
 #' @importFrom purrr map map_dfr map_df
 #' @importFrom stats coefficients AIC BIC nobs
-#' @importFrom tidyr `%>%` as_tibble spread
+#' @importFrom tidyr as_tibble spread
 #' @importFrom dplyr mutate case_when mutate_if select full_join
 #' @importFrom stringi stri_replace_all_fixed
 #' @importFrom stringr str_to_title str_replace_all
@@ -26,7 +26,7 @@
 #'
 #' @examples
 #' p_annotator(list(lme_model3, lme_model2, lme_model1))
-#' @note Currently only 3 models are best tidied (in join step) due to column name mismatch
+#' @note Currently only 3 models are tidied (in join step) due to column name mismatch
 #'
 p_annotator <- function(model_list) {
   model_iv_terms_all <- purrr::map(model_list, ~attr(.x$terms, "dataClasses")) %>%

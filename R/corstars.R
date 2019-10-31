@@ -10,7 +10,7 @@
 #' @param removeTriangle A character vector indicating which part of the table to remove. "upper" or "lower" triangle.
 #' @param result A character indicating table output format. "html" or "latex" or "none" for plain markdown table.
 #'
-#' @return
+#' @return A dataframe
 #' @export
 #'
 #' @importFrom Hmisc rcorr

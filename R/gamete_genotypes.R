@@ -6,7 +6,14 @@
 #'
 #' @param x A character vector of length 4 indicating allelic composition of the locus in the tetraploid genotype
 #'
-#' @return
+#' @importFrom tibble enframe
+#' @importFrom combinat permn
+#' @importFrom dplyr mutate ungroup count group_by
+#' @importFrom tidyr unnest
+#' @importFrom purrr map map_chr
+#' @importFrom utils combn
+#'
+#' @return A tbl
 #' @export
 #'
 #' @examples

@@ -1,20 +1,3 @@
-# ========== hello ==========
-#
-#' @title Print "Hello name!"
-#' @description This is an example function named 'hello'
-#' which greets any "name" input by printing "Hello name!".
-#' @param x A string
-#'
-#' @return The output from \code{\link{print}}
-#' @export
-#'
-#' @examples
-#' hello("Deependra")
-#'
-hello <- function(x) {
-  print(paste("Hello ", x, "!", sep = "", collapse = ""))
-}
-
 # ========== lm_list ==========
 #
 #' @title Fit linear models for multiple response variables in a dataframe

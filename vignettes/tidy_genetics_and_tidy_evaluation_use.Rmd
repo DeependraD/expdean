@@ -1,20 +1,34 @@
 ---
 title: "Tidy genetics and tidy evaluation use"
-author: "Deependra Dhakal"
-date: "10/21/2019"
-output: pdf_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{expdean tidy functions for batch modeling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(expdean)
+```
+
+This vignette dives deeply into metaprogramming. This draws from resources available online, mainly the following:
+
+- [Tidy eval webinar with Nicholas May](https://www.youtube.com/watch?v=52R8fNbccx4)
+- [Expressions; Advanced R](https://adv-r.hadley.nz/expressions.html)
 
 expr() and exprs() capture expressions that you supply:
 
 ```{r}
 rlang::expr(symbol)
 rlang::exprs(several, such, symbols)
-
 ```
 
 enexpr() and enexprs() capture expressions that your user supplied:
@@ -101,67 +115,111 @@ All the quosures in the expression evaluate in their original context. The local
 rlang::eval_tidy(quo)
 ```
 
-
 ```{r}
 
 simple_df <- readr::read_csv("./data/00 Sample RCBD data.csv", na = ".")
 simple_df <- simple_df %>% 
   mutate_at(c("Country", "Location", "Rep", "Genotype"), as.factor)
 
-heritability_n_blues <- function(df, grouping_var, grouping_items_sel,
-                                 dependent_var, covariate = FALSE, genotype_var, replication_var){
-  
-  grvariable <- substitute(grouping_var) # capture the user expression and its environment
-  gritems <- grouping_items_sel
-  response <- substitute(dependent_var)
-  co_variate <- substitute(covariate)
-  genotype <- substitute(genotype_var) # capture expressions that your user supplied
-  replication <- substitute(replication_var)
-  response_exp <- paste0(quo_name(response), "_exp")
-  co_variate_scaled <- paste0(quo_name(co_variate), "_scaled")
-  
-  # create working dataframe with response as expectation of the interested variable
-  df_tmp <- df %>%
-    dplyr::mutate(!! response_exp := (!!response-mean(!!response, na.rm = T))/stats::sd(!!response, na.rm = T)) %>%
-    dplyr::mutate(!! co_variate_scaled := scale(!!co_variate, scale = T, center = T))
-  
-  # instantiate objects and parameters
-  genotypic_var <- numeric()
-  error_var <- numeric()
-  h2 <- numeric()
-  nRep <- df_tmp %>% dplyr::pull(!!replication) %>% unique() %>% length()
-
-  models <- df_tmp %>%
-    dplyr::filter(!!grvariable %in% grouping_items_sel) %>%
-    dplyr::group_by(!!grvariable) %>%
-    dplyr::summarise(model_rcbd_random = list(
-      lme4::lmer(stats::reformulate(termlabels = c(paste("(1|", replication, ")"),
-                                                   paste("(1|", genotype, ")"),
-                                                   !! co_variate_scaled),
-                                    response = !! response_exp))),
-      model_rcbd_mixed = list(
-        lme4::lmer(stats::reformulate(termlabels = c(paste("(1|", replication, ")"),
-                                               genotype,
-                                               !! co_variate_scaled), # to omit fixed effect covariate remove thismanually
-                                response = !! response_exp)))
-    )
-    
-  return(list(df_tmp, 
-              models,
-              co_variate_scaled, 
-              response_exp, 
-              replication, 
-              genotype, 
-              nRep))
-  
-}
-
-hvalues_and_other <- heritability_n_blues(df = `simple_df`, grouping_var = `Location`, 
+h2_blue <- heritability_n_blues(df = simple_df, grouping_var = `Location`, 
                      grouping_items_sel = c("Karaj", "Beijin", "Chihuahua"), 
-                     dependent_var = `YLD`, genotype_var = `Genotype`, covariate = `TGW`,
+                     dependent_var = `YLD`, genotype_var = Genotype, covariate = `TGW`,
                      replication_var = `Rep`)
 
-
-hvalues_and_other
+h2_blue
 ```
 
+##
+
+```{r}
+simple_df %>% head()
+```
+
+In the data given above (`simple_df`), let us construct a tidyverse helper function that generates mean for a given grouping variable.
+
+```{r}
+mean_var_grouped <- function(data, grouping_var, summarized_var){
+  grouping_var_quo <- enquo(grouping_var)
+  summarized_var_quo <- enquo(summarized_var)
+  summarized_var_out_quo <- paste0("mean_", quo_name(summarized_var_quo))
+  print(summarized_var_out_quo)
+  
+  data %>% 
+    group_by(!!grouping_var_quo) %>% 
+    summarize(!! summarized_var_out_quo := mean(!!summarized_var_quo, na.rm = TRUE))
+}
+
+mean_var_grouped(data = simple_df, grouping_var = Location, summarized_var = `YLD`)
+
+# # if ensym is used, following works as well
+# mean_var_grouped(data = simple_df, grouping_var = "Location", summarized_var = "TGW")
+```
+
+If more than one variable needs to be summarized simulataneously with same function/s we need to convert the variable names to symbols first.
+
+```{r}
+mean_var_grouped <- function(data, grouping_var, summarized_var, funks){
+  grouping_var_quo <- enquo(grouping_var)
+  summarized_var_syms <- syms(summarized_var)
+  print(summarized_var_syms)
+  # summarized_var_out_quo <- paste0("mean_", quo_name(summarized_var_quo))
+  # print(summarized_var_out_quo)
+  
+  # quote functions as expressions
+  fun_exprs <- enexpr(funks)[-1] # omit first from c(list, min, max )
+  as.list(fun_exprs)
+  
+  map_dfc(fun_exprs, 
+          function(fun){
+            map_dfc(summarized_var_syms, 
+                    function(summarized_var_sym){
+                      data %>%
+                        summarize(
+                          !!paste0(fun, "_", summarized_var_sym) :=
+                            (!!fun)(!!summarized_var_sym, na.rm = TRUE)
+                        )
+                    })
+          })
+
+}
+
+mean_var_grouped(data = simple_df, grouping_var = Location, summarized_var = c("YLD", "TGW"), funks = list(min, max, mean))
+```
+
+## Reducing sparsity
+
+```{r}
+coalesce_all_ift_fields <- function(df, irrel_fields) {
+  # Get initial visit field names, follow-up names, and telephone names
+  ift_fields <- names(df)[-which(irrel_fields %in% names(df))]
+  
+  # Reduce initial, follow-up, telephone visit fields to initial fields only
+  i_fields <- reduce_ift_fieldnames(ift_fields)
+  
+  # Convert initial field strings to symbol expressions
+  i_fields_syms <- syms(i_fields)
+  
+  # Map over intial visit field symbols, coalescing IFT fields
+  # Each iteration returns coalesced field, column-bound to other coal'd fields
+  map_dfc(i_fields_syms,
+          function(i_field_sym) {
+            f_field_sym <- sym(paste0("fu_", i_field_sym))
+            t_field_sym <- sym(paste0("tele_", i_field_sym))
+            
+            df %>% 
+              select(!!i_field_sym, !!f_field_sym, !!t_field_sym) %>% 
+              mutate(!!i_field_sym := 
+                       coalesce(!!i_field_sym, !!f_field_sym, !!t_field_sym)) %>% 
+              select(-!!f_field_sym, -!!t_field_sym)
+          }) %>% 
+    # attach `irrel_fields` to the front of the returned data frame
+    bind_cols(df[, irrel_fields], .) 
+}
+
+# refer to example from Nicholas May's tutorial
+```
+
+
+## Notes
+
+- It is better to use `ensym()` in a dataframe context (for example when quoting column names), because it can capture symbolic names and works with strings.
