@@ -5,17 +5,17 @@
 #' @param grouping_items_sel A character vector of items which are subset of grouping variable selected for obtaining heritability.
 #' @param dependent_var Column name of response variable whose heritability estimates are being obtained through model.
 #' @param covariate Column name of numeric variable. Adjusted values of dependent variable for this covariate will be used in obtaining estimates.
-#' @param genotype Column name of variable representing genotypes/treatments.
+#' @param genotype_var Column name of variable representing genotypes/treatments.
 #' @param replication_var Column name of variable representing replicated records of genotypes/treatments.
 #'
 #' @return A list
 #' @export
-#'
+#' @import rlang
 #' @importFrom dplyr mutate summarise pull filter group_by
-#' @importFrom stats sd reformulate
+#' @importFrom stats sd reformulate pt cov cor
 #' @importFrom lme4 lmer
-#' @importFrom purrr map2_dbl map_dfc
-#' @importFrom magrittr set_names
+#' @importFrom purrr map2_dbl map_dfc map_dbl
+#' @importFrom magrittr set_names "%>%"
 #'
 #' @examples
 #'
@@ -25,15 +25,10 @@
 #' # load data
 #' df <- expdean::simple_rcbd_df
 #' df <- mutate_at(df, c("Genotype", "Rep"), as.factor)
-#' # check for factor levels
-#' df %>%
-#'   select_if(list(~is.factor(.)|is.character(.))) %>%
-#'   map_int(~length(unique(.x)))
-#' # calculate genetic correlation for locations in absence of other grouping factors while adjusting for covariate
-#' heritability_n_blues(df, grouping_items_sel = c("Buenos Aires", "Beijin", "Karaj"),
-#'                      grouping_var = Location,
-#'                      genotype = Genotype, replication_var = Rep,
-#'                      dependent_var = YLD, covariate = TGW)
+#' h2_blue <- heritability_n_blues(df = simple_rcbd_df, grouping_var = `Location`,
+#'                                 grouping_items_sel = c("Karaj", "Beijin", "Chihuahua"),
+#'                                 dependent_var = `YLD`, genotype_var = Genotype, covariate = `TGW`,
+#'                                 replication_var = `Rep`)
 #'
 #' @note Adapted from 'meta-r' application package
 heritability_n_blues <- function(df, grouping_var, grouping_items_sel,
@@ -95,13 +90,13 @@ heritability_n_blues <- function(df, grouping_var, grouping_items_sel,
   # also filter heritability estimates only for selected columns in blue matrix
   h2 <- h2[colnames(fixed_blue_mat)]
 
-  corPHEN <- cor(fixed_blue_mat, use="pairwise.complete.obs")
+  corPHEN <- stats::cor(fixed_blue_mat, use="pairwise.complete.obs")
   glPHEN <- nrow(fixed_blue_mat)
   if(glPHEN<=2) glPHEN <- 3
   tPHEN <- abs(corPHEN/sqrt((1-corPHEN^2)/(glPHEN-2)))
-  pvaluePHEN <- 2*(1-pt(tPHEN,glPHEN-2))
+  pvaluePHEN <- 2*(1-stats::pt(tPHEN,glPHEN-2))
 
-  covPHEN <- cov(fixed_blue_mat, use="pairwise.complete.obs")
+  covPHEN <- stats::cov(fixed_blue_mat, use="pairwise.complete.obs")
 
   ## calculate genetic correlation for locations if grouping factor is present
   # Genetic correlations
@@ -122,13 +117,10 @@ heritability_n_blues <- function(df, grouping_var, grouping_items_sel,
   corGEN[corGEN > 1] <- .9999
   corGEN[corGEN < -1] <- -0.9999
   tGEN <- abs(corGEN/sqrt((1-corGEN^2)/(gl-2)))
-  pvalueGEN <- 2*(1-pt(tGEN,gl-2))
+  pvalueGEN <- 2*(1-stats::pt(tGEN,gl-2))
 
-  # The phenotypic correlation matrix is
-  corPHEN
-
-  # The genotypic correlation matrix is
-  corGEN
+  # The phenotypic correlation matrix is corPHEN
+  # The genotypic correlation matrix is corGEN
 
   out <- list(heritability = h2, blues = blue_mat,
               corphen = corPHEN, corphen_pvalue = pvaluePHEN,
