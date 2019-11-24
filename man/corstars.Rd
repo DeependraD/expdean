@@ -4,9 +4,14 @@
 \alias{corstars}
 \title{Correlation table with stars}
 \usage{
-corstars(x, align, caption, method = c("pearson", "spearman"),
-  removeTriangle = c("upper", "lower"), result = c("none", "html",
-  "latex"))
+corstars(
+  x,
+  align,
+  caption,
+  method = c("pearson", "spearman"),
+  removeTriangle = c("upper", "lower"),
+  result = c("none", "html", "latex")
+)
 }
 \arguments{
 \item{x}{A matrix (or all numeric dataframe) containing the data.}
@@ -25,12 +30,16 @@ corstars(x, align, caption, method = c("pearson", "spearman"),
 A dataframe
 }
 \description{
-Annotate table of correlation coefficients with the stars corresponding to the level of significance.
+Annotate table of correlation coefficients with the stars corresponding to the level of significance. A commonplace notation is use for annotation; For,
+- p < .0001: "****"
+- p < .001: "***"
+- p < .01, "**", and
+- p < .05, "*"
 }
 \examples{
 \dontrun{
 # require(tidyverse)
-corstars(mtcars \%>\% select_if(is.numeric))
+corstars(mtcars %>% select_if(is.numeric))
 }
 
 }

@@ -4,8 +4,12 @@
 \alias{grid_arrange_share_legend}
 \title{Common legend for two or more `gg` grobs.}
 \usage{
-grid_arrange_share_legend(..., nrow = 1, ncol = length(list(...)),
-  position = c("bottom", "right"))
+grid_arrange_share_legend(
+  ...,
+  nrow = 1,
+  ncol = length(list(...)),
+  position = c("bottom", "right")
+)
 }
 \arguments{
 \item{...}{Objects of class grob}
@@ -30,10 +34,10 @@ Source: http://rpubs.com/sjackman/grid_arrange_shared_legend
 \examples{
 \dontrun{
 # Example
-mtmodified <- mtcars \%>\%
+mtmodified <- mtcars %>%
 mutate_at(c("am", "vs"), as.factor)
-mtmodified1 <- mtmodified \%>\% ggplot(aes(am, mpg, group = `am`, fill = `am`)) + geom_boxplot()
-mtmodified2 <- mtmodified \%>\% ggplot(aes(vs, mpg, group = `vs`, fill = `vs`)) + geom_boxplot()
+mtmodified1 <- mtmodified %>% ggplot(aes(am, mpg, group = `am`, fill = `am`)) + geom_boxplot()
+mtmodified2 <- mtmodified %>% ggplot(aes(vs, mpg, group = `vs`, fill = `vs`)) + geom_boxplot()
 grid_arrange_share_legend(mtmodified1, mtmodified2,
                           nrow = 2, ncol = 1, position = "bottom")
 }

@@ -16,8 +16,8 @@
 #'
 #' @importFrom purrr map_dfr pluck map reduce
 #' @importFrom agricolae duncan.test
-#' @importFrom magrittr set_colnames
-#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr `%>%`
+#' @importFrom magrittr rownames_to_column set_colnames
 #' @importFrom dplyr left_join
 #'
 #' @examples
@@ -73,7 +73,7 @@ mean_differences_lm <- function(model_list, treatment_factor_list){
 #' @export
 #'
 #' @importFrom purrr map map_dfr
-#' @importFrom tidyr as_tibble
+#' @importFrom tidyr as_tibble `%>%`
 #' @importFrom emmeans emmeans
 #' @importFrom multcomp cld
 #' @importFrom dplyr mutate_at vars contains

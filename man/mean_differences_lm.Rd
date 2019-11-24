@@ -24,16 +24,16 @@ this function works best in conjuction with `lm_list`
 \examples{
 \dontrun{
 # model marginal mean
-mt_trial <- mtcars \%>\%
-  rownames_to_column("vehicle_name") \%>\%
-  as_tibble() \%>\%
+mt_trial <- mtcars %>%
+  rownames_to_column("vehicle_name") %>%
+  as_tibble() %>%
   mutate_at(c("vehicle_name", "vs", "am"), as.factor)
 
 mt_lm1 <- lm(`mpg`~`am`*`vs` + `hp`, data = mt_trial)
 mt_lm2 <- lm(`drat`~`am`*`vs` + `hp` + `disp`, data = mt_trial)
 mt_lm3 <- lm(`qsec`~`am`*`vs` + `hp`, data = mt_trial)
 
-mt_named_list <- list(mt_lm1, mt_lm2, mt_lm3) \%>\%
+mt_named_list <- list(mt_lm1, mt_lm2, mt_lm3) %>%
   set_names(c("response_1st", "response_2nd", "response_3rd"))
 
 mt_treatment_factor_list <- list("am", "vs", c("am", "vs"))

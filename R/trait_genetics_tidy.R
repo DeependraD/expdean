@@ -23,12 +23,11 @@
 #' library(emmeans)
 #' require(tidyverse)
 #' # load data
-#' df <- data(sample_rcbd) # na = ".", while reading the csv
-#' df <- df %>%
-#'   mutate_at(c("Genotype", "Rep"), as.factor)
+#' df <- expdean::simple_rcbd_df
+#' df <- mutate_at(df, c("Genotype", "Rep"), as.factor)
 #' # check for factor levels
 #' df %>%
-#'   select_if(funs(is.factor(.)|is.character(.))) %>%
+#'   select_if(list(~is.factor(.)|is.character(.))) %>%
 #'   map_int(~length(unique(.x)))
 #' # calculate genetic correlation for locations in absence of other grouping factors while adjusting for covariate
 #' heritability_n_blues(df, grouping_items_sel = c("Buenos Aires", "Beijin", "Karaj"),

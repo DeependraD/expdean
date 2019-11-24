@@ -2,7 +2,11 @@
 #
 #' @title Correlation table with stars
 #' @description
-#' Annotate table of correlation coefficients with the stars corresponding to the level of significance.
+#' Annotate table of correlation coefficients with the stars corresponding to the level of significance. A commonplace notation is use for annotation; For,
+#' - p < .0001: "****"
+#' - p < .001: "***"
+#' - p < .01, "**", and
+#' - p < .05, "*"
 #' @param x A matrix (or all numeric dataframe) containing the data.
 #' @param align A character vector of alignment values as is specified in `xtable(x, align)`.
 #' @param caption A character vector to be used as caption for the correlation table.

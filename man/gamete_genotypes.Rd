@@ -17,19 +17,19 @@ Taking a string input of genotype of an individual, function finds the gamete ty
 and its probability in a random meiosis event.
 }
 \examples{
-
-gamete_genotypes(c("a+", "a+", "a", "a"))
-# since a+a and aa+ are indistinguishible in phenotype, these two classes can be merged
-mutate(v_comb = fct_recode(v_comb, "aa+" = "a+a")) \%>\%
+require(tidyverse)
+gamete_genotypes(c("a+", "a+", "a", "a")) \%>\%
+  # since a+a and aa+ are indistinguishible in phenotype, these two classes can be merged
+  mutate(v_comb = fct_recode(v_comb, "aa+" = "a+a")) \%>\%
   group_by(v_comb) \%>\%
   summarise_at(c("n", "prop_n"), sum)
 
 \dontrun{
 # notice how quickly homolog permutation increases as ploidy level increase
 # with just 8 homologues there are ~40k permutations,
-combinat::permn(c("a+", "a+", "a", "a", "a", "a+", "a+", "a+"), c) \%>\% length()
+combinat::permn(c("a+", "a+", "a", "a", "a", "a+", "a+", "a+"), c) %>% length()
 # but note that unique combinations are far less: 56
-combinat::permn(c("a+", "a+", "a", "a", "a", "a+", "a+", "a+"), c) \%>\% unique() \%>\% length()
+combinat::permn(c("a+", "a+", "a", "a", "a", "a+", "a+", "a+"), c) %>% unique() %>% length()
 }
 
 }

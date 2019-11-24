@@ -17,10 +17,10 @@
 #' @export
 #'
 #' @examples
-#'
-#' gamete_genotypes(c("a+", "a+", "a", "a"))
-#' # since a+a and aa+ are indistinguishible in phenotype, these two classes can be merged
-#' mutate(v_comb = fct_recode(v_comb, "aa+" = "a+a")) %>%
+#' require(tidyverse)
+#' gamete_genotypes(c("a+", "a+", "a", "a")) %>%
+#'   # since a+a and aa+ are indistinguishible in phenotype, these two classes can be merged
+#'   mutate(v_comb = fct_recode(v_comb, "aa+" = "a+a")) %>%
 #'   group_by(v_comb) %>%
 #'   summarise_at(c("n", "prop_n"), sum)
 #'
@@ -43,4 +43,5 @@ gamete_genotypes <- function(x){
     dplyr::count(sort = T) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(prop_n = n/sum(n))
+  return(ggenotypes)
 }

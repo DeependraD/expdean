@@ -31,10 +31,11 @@ Suggests:
     knitr,
     rmarkdown,
     tidyverse,
-    roxygen2
+    roxygen2,
+    testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
 LazyData: true
 Repository: github
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.0

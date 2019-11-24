@@ -1,7 +1,7 @@
 # ========== lm_list ==========
 #
 #' @title Fit linear models for multiple response variables in a dataframe
-#' Function creates from a vector of response variables in a given dataframe, a list of linear model objects.
+#' @description Function creates from a vector of response variables in a given dataframe, a list of linear model objects.
 #' Additionally, a character vector of RHS terms of linear model formula specification, and a dataset needs to be passed.
 #'
 #' @param df A dataframe or any other object of coercible class
@@ -26,7 +26,7 @@
 #'   as_tibble() %>%
 #'   mutate_at(c("vehicle_name", "vs", "am"), as.factor)
 #'
-#' lm_list(mt_trial, c("mpg", "drat", "qsec"), c("am", "vs", "am:vs", "hp"))
+#' lm_list(mt_trial, response = c("mpg", "drat", "qsec"), rhs_terms = c("am", "vs", "am/vs", "hp"))
 #'
 #' }
 #'
@@ -34,7 +34,7 @@ lm_list <- function(df, response, rhs_terms){
 
   response_orig <- response # orignal frame response names
   rhs_terms_orig <- rhs_terms # original frame right hand side terms
-  rhs_terms_split <- stringr::str_trim(unlist(rhs_terms_orig %>% str_split("[*:|/+]"))) # original frame formula terms
+  rhs_terms_split <- stringr::str_trim(unlist(rhs_terms_orig %>% stringr::str_split("[*:|/+]"))) # original frame formula terms
   df <- df[, c(rhs_terms_split, response)]
   cols_orig <- colnames(df) # original frame colnames
   response_icol <- which(cols_orig %in% response_orig) # column index of response in original frame

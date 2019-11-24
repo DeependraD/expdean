@@ -26,7 +26,7 @@ mean_differences_emmeans(model_list = mt_named_list, treatment_factor_list = mt_
 plot(emmeans::emmeans(mt_lm1, "am"), comparison = T)
 
 # plot emmeans p-values
-emmeans::pwpp(emmeans::emmeans(mt_lm1, "am")) \%>\% plot()
+emmeans::pwpp(emmeans::emmeans(mt_lm1, "am")) %>% plot()
 }
 
 }

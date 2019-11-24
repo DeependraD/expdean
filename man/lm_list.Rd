@@ -2,9 +2,7 @@
 % Please edit documentation in R/lm_list.R
 \name{lm_list}
 \alias{lm_list}
-\title{Fit linear models for multiple response variables in a dataframe
-Function creates from a vector of response variables in a given dataframe, a list of linear model objects.
-Additionally, a character vector of RHS terms of linear model formula specification, and a dataset needs to be passed.}
+\title{Fit linear models for multiple response variables in a dataframe}
 \usage{
 lm_list(df, response, rhs_terms)
 }
@@ -20,18 +18,17 @@ Each element of the vector will be passed as a model term in the \code{\link{for
 List of \code{\link{lm}} objects
 }
 \description{
-Fit linear models for multiple response variables in a dataframe
 Function creates from a vector of response variables in a given dataframe, a list of linear model objects.
 Additionally, a character vector of RHS terms of linear model formula specification, and a dataset needs to be passed.
 }
 \examples{
 \dontrun{
-mt_trial <- mtcars \%>\%
-  rownames_to_column("vehicle_name") \%>\%
-  as_tibble() \%>\%
+mt_trial <- mtcars %>%
+  rownames_to_column("vehicle_name") %>%
+  as_tibble() %>%
   mutate_at(c("vehicle_name", "vs", "am"), as.factor)
 
-lm_list(mt_trial, c("mpg", "drat", "qsec"), c("am", "vs", "am:vs", "hp"))
+lm_list(mt_trial, response = c("mpg", "drat", "qsec"), rhs_terms = c("am", "vs", "am/vs", "hp"))
 
 }
 
